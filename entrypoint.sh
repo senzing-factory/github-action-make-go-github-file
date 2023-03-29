@@ -11,6 +11,11 @@ echo "Requested filename: ${INPUT_FILENAME}"
 echo "Requested package: ${INPUT_PACKAGE}"
 echo "Requested package: ${INPUT_VERSION}"
 
+if [ -z "$INPUT_VERSION" ]; then
+    echo "INPUT_VERSION is empty."
+fi
+
+
 # Apply hotfix for 'fatal: unsafe repository' error.
 
 git config --global --add safe.directory "${GITHUB_WORKSPACE}"
