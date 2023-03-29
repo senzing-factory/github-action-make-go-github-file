@@ -1,11 +1,23 @@
 # action.yml
-name: "Create vM.m.P tag for Go module version"
-description: "Create a new tag based on the Semantic Version for use in Go dependency management."
+name: "Create a version.go file"
+description: "Create a version.go file containing the current GitHub release information."
 author: support@senzing.com
-
+inputs:
+  file:
+    description: 'The file to create. Default: cmd/version.go'
+    required: false
+    default: 'cmd/version.go'
+  package:
+    description: 'The package name for the package statement. Default: cmd'
+    required: false
+    default: 'cmd'
+        
 runs:
   using: "docker"
   image: "Dockerfile"
+  args: 
+    - ${{ inputs.file }}
+    - ${{ inputs.package }}  
 
 branding:
   icon: "git-pull-request"
