@@ -11,9 +11,6 @@ inputs:
     description: 'The package name for the package statement. Default: cmd'
     required: false
     default: 'cmd'
-  version:
-    description: 'The Semantic Version of the release. Example: 1.2.3'
-    required: true
         
 runs:
   using: "docker"
@@ -21,7 +18,6 @@ runs:
   args: 
     - ${{ inputs.file }}
     - ${{ inputs.package }}  
-    - ${{ inputs.version }} 
     
 branding:
   icon: "git-pull-request"
