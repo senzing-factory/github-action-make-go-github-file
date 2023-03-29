@@ -59,7 +59,7 @@ cat ${OUTFILE}
 
 git add ${OUTFILE}
 git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
-git push origin HEAD:${GITHUB_WORKFLOW_REF}
+git push origin HEAD:${GITHUB_REF}
 
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
