@@ -3,8 +3,8 @@ set -eu
 
 # Input parameters.
 
-#FILENAME=$1
-#PACKAGE=$2
+INPUT_FILENAME=$1
+INPUT_PACKAGE=$2
 
 echo "Requested filename: ${INPUT_FILENAME}"
 echo "Requested package: ${INPUT_PACKAGE}"
