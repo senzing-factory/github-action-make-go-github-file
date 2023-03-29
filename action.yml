@@ -1,6 +1,6 @@
 # action.yml
-name: "Create vM.m.P tag for Go module version"
-description: "Create a new tag based on the Semantic Version for use in Go dependency management."
+name: "Create a version.go file"
+description: "Create a version.go file containing the current GitHub release information."
 author: support@senzing.com
 
 runs:
