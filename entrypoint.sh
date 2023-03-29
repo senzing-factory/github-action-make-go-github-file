@@ -36,7 +36,7 @@ pwd
 
 # Synthesize variables for file.
 
-RELEASE_REPOSITORY_NAME=${GITHUB_REPOSITORY}
+RELEASE_REPOSITORY_NAME=$(basename ${GITHUB_REPOSITORY})
 RELEASE_BUILD=${GITHUB_REF_NAME}
 RELEASE_ITERATION="0"
 OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
@@ -57,9 +57,11 @@ echo "" >> ${OUTFILE}
 
 # Inspect the file.
 
-echo "\nContents of ${OUTFILE}:\n"
+echo ""
+echo "Contents of ${OUTFILE}:"
+echo ""
 cat ${OUTFILE}
-echo "\n"
+
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
