@@ -61,7 +61,8 @@ echo ""
 git status
 echo ">>> Step: 1"
 
-git checkout ${GITHUB_REF}
+echo "git checkout ${GITHUB_REF}"
+git checkout "${GITHUB_REF}"
 git status
 echo ">>> Step: 2"
 
@@ -73,7 +74,7 @@ git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION
 git status
 echo ">>> Step: 4"
 
-git push origin
+git push origin "HEAD:${GITHUB_REF}"
 git status
 echo ">>> Step: 5"
 
