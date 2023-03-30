@@ -1,13 +1,12 @@
 #!/bin/sh
 set -eu
 
-echo $@
-
 # Input parameters.
 
 INPUT_FILENAME=$1
 INPUT_PACKAGE=$2
 
+echo "  Input parameters: $@"
 echo "Requested filename: ${INPUT_FILENAME}"
 echo "Requested  package: ${INPUT_PACKAGE}"
 
@@ -24,11 +23,6 @@ git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
 cd "${GITHUB_WORKSPACE}" || exit
 
-# FIXME: Debug information.
-
-env | sort
-pwd
-
 # Synthesize variables.
 
 RELEASE_REPOSITORY_NAME=$(basename ${GITHUB_REPOSITORY})
@@ -43,15 +37,11 @@ NEW_BRANCH_NAME="make-go-version-file.yaml/${RELEASE_VERSION}"
 FIRST_LINE="// ${RELEASE_VERSION}"
 
 if [ -f ${OUTFILE} ]; then
-    echo ">>> Step: 0a"
-    echo "$(head -n 1 ${OUTFILE})"
     EXISTING_FIRST_LINE=$(head -n 1 ${OUTFILE})
-    echo ">>> Step: 0b"
     if [ "${FIRST_LINE}" = "${EXISTING_FIRST_LINE}" ]; then
-        echo "${FIRST_LINE}" is already up to date.
+        echo "${OUTFILE} is up to date. No changes needed."
         exit 0
     fi
-    echo ">>> Step: 0c"
 fi
 
 #------------------------------------------------------------------------------
@@ -85,12 +75,7 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
-# Delete tag on GitHub.  Similar to --delete.
-
-#echo "git push origin :${GITHUB_REF}"
-#git push origin ":${GITHUB_REF}"
-#git status
-#echo ">>> Step: 2"
+# Commit the file to the branch on origin.
 
 echo ">>> git add ${OUTFILE}"
 git add ${OUTFILE}
@@ -104,11 +89,24 @@ echo ">>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
 git push --set-upstream origin "${NEW_BRANCH_NAME}"
 git status
 
+# Create a Pull Request for the branch.
+
 echo ">>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 gh pr create \
     --head "${NEW_BRANCH_NAME}" \
     --title "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}" \
     --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+
+#------------------------------------------------------------------------------
+# Update the tagged version.
+#------------------------------------------------------------------------------
+
+# Delete tag on GitHub.  Similar to --delete.
+
+#echo "git push origin :${GITHUB_REF}"
+#git push origin ":${GITHUB_REF}"
+#git status
+#echo ">>> Step: 2"
 
 #echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
 #git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
@@ -119,8 +117,6 @@ gh pr create \
 #git push origin --tags
 #git status
 #echo ">>> Step: 7"
-
-
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
