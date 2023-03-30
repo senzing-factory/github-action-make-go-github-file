@@ -91,7 +91,7 @@ git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION
 git status
 echo ">>> Step: 4"
 
-git push --delete origin "HEAD:${GITHUB_REF}"
+git push --delete origin "${GITHUB_REF}"
 git status
 echo ">>> Step: 5"
 
