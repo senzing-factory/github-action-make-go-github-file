@@ -50,7 +50,7 @@ fi
 
 # Make a new branch.
 
-echo ">>> git checkout -b \"${NEW_BRANCH_NAME}\""
+echo ">>>>>>>> git checkout -b \"${NEW_BRANCH_NAME}\""
 git checkout -b "${NEW_BRANCH_NAME}"
 git status
 
@@ -79,24 +79,24 @@ cat ${OUTFILE}
 
 # Commit the file to the branch and push branch to origin.
 
-echo ">>> git add ${OUTFILE}"
+echo ">>>>>>>> git add ${OUTFILE}"
 git add ${OUTFILE}
 git status
 
-echo ">>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 
-echo ">>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
+echo ">>>>>>>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
 git push --set-upstream origin "${NEW_BRANCH_NAME}"
 git status
 
 # Create a Pull Request for the branch.
 
-echo ">>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+echo ">>>>>>>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 gh pr create \
     --head "${NEW_BRANCH_NAME}" \
-    --title "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}" \
+    --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${RELEASE_VERSION}" \
     --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 
 #------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ gh pr create \
 
 # Checkout tag.
 
-echo ">>> git checkout -b \"${GITHUB_REF}\""
+echo ">>>>>>>> git checkout -b \"${GITHUB_REF}\""
 git checkout -b "${GITHUB_REF}"
 git status
 
@@ -134,19 +134,19 @@ cat ${OUTFILE}
 
 # Replace tag on GitHub.
 
-echo ">>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
+echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
 git push origin ":${GITHUB_REF}"
 git status
 
-echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
+echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
 git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
 git status
 
-echo "git push origin --tags"
-git push origin --tags
+echo ">>>>>>>> git push origin --tags \"${GITHUB_REF}\""
+git push origin --tags "${GITHUB_REF}"
 git status
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
 
-echo ">>> Done"
+echo ">>>>>>>> Done"
