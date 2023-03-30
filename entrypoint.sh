@@ -53,14 +53,15 @@ fi
 
 # Work in main branch.
 
+echo "git checkout main"
 git checkout main
 git status
 echo ">>> Step: 1"
 
 # Write the file.
 
-echo "${FIRST_LINE}"
-echo "// Created by make-go-version-file.yaml on $(date)" > ${OUTFILE}
+echo "${FIRST_LINE}" > ${OUTFILE}
+echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
 echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
 echo "" >> ${OUTFILE}
 echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
@@ -80,22 +81,34 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
-git add ${OUTFILE}
+# Delete tag on GitHub.  Similar to --delete.
+
+echo "git push origin :${GITHUB_REF}"
+git push origin ":${GITHUB_REF}"
 git status
 echo ">>> Step: 2"
 
-git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+echo "git add ${OUTFILE}"
+git add ${OUTFILE}
 git status
 echo ">>> Step: 3"
 
-git push
+echo "git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 echo ">>> Step: 4"
 
+echo "git push"
+git push
+git status
+echo ">>> Step: 5"
+
+echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
 git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
 git status
 echo ">>> Step: 6"
 
+echo "git push origin --tags"
 git push origin --tags
 git status
 echo ">>> Step: 7"
