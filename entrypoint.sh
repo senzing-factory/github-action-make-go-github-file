@@ -44,60 +44,7 @@ if [ -f ${OUTFILE} ]; then
     fi
 fi
 
-#------------------------------------------------------------------------------
-# Make a Pull Request for main branch.
-#------------------------------------------------------------------------------
 
-# Make a new branch.
-
-echo ">>>>>>>> git checkout -b \"${NEW_BRANCH_NAME}\""
-git checkout -b "${NEW_BRANCH_NAME}"
-git status
-
-# Write the file into the branch.
-
-echo "${FIRST_LINE}" > ${OUTFILE}
-echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
-echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
-echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
-echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
-echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
-echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
-echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
-echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
-echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
-
-# Inspect the file.
-
-echo ""
-echo "Contents of ${OUTFILE}:"
-echo ""
-cat ${OUTFILE}
-
-# Commit the file to the branch and push branch to origin.
-
-echo ">>>>>>>> git add ${OUTFILE}"
-git add ${OUTFILE}
-git status
-
-echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
-git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
-git status
-
-echo ">>>>>>>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
-git push --set-upstream origin "${NEW_BRANCH_NAME}"
-git status
-
-# Create a Pull Request for the branch.
-
-echo ">>>>>>>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
-gh pr create \
-    --head "${NEW_BRANCH_NAME}" \
-    --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${RELEASE_VERSION}" \
-    --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 
 #------------------------------------------------------------------------------
 # Update the tagged version.
@@ -160,3 +107,63 @@ git status
 # git push origin --tags
 
 echo ">>>>>>>> Done"
+
+exit 0   # Debug
+
+#------------------------------------------------------------------------------
+# Make a Pull Request for main branch.
+#------------------------------------------------------------------------------
+
+# Make a new branch.
+
+echo ">>>>>>>> git checkout -b \"${NEW_BRANCH_NAME}\""
+git checkout -b "${NEW_BRANCH_NAME}"
+git status
+
+# Write the file into the branch.
+
+echo "${FIRST_LINE}" > ${OUTFILE}
+echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
+echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
+echo "" >> ${OUTFILE}
+echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
+echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
+echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
+echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
+echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
+echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
+echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
+echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
+echo "" >> ${OUTFILE}
+
+# Inspect the file.
+
+echo ""
+echo "Contents of ${OUTFILE}:"
+echo ""
+cat ${OUTFILE}
+
+# Commit the file to the branch and push branch to origin.
+
+echo ">>>>>>>> git add ${OUTFILE}"
+git add ${OUTFILE}
+git status
+
+echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+git status
+
+echo ">>>>>>>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
+git push --set-upstream origin "${NEW_BRANCH_NAME}"
+git status
+
+# Create a Pull Request for the branch.
+
+echo ">>>>>>>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+gh pr create \
+    --head "${NEW_BRANCH_NAME}" \
+    --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${RELEASE_VERSION}" \
+    --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+
+echo ">>>>>>>> Done"
+
