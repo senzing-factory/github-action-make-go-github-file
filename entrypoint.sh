@@ -38,15 +38,18 @@ OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
 # Check if file is already up-to-date.
 
 FIRST_LINE="// ${RELEASE_VERSION}"
-echo ">>> Step: 0a"
-echo "$(head -n 1 ${OUTFILE})"
-EXISTING_FIRST_LINE=$(head -n 1 ${OUTFILE})
-echo ">>> Step: 0b"
-if [ "${FIRST_LINE}" = "${EXISTING_FIRST_LINE}" ]; then
-    echo "${FIRST_LINE}" is already up to date.
-    exit 0
+
+if [ -f ${OUTFILE} ]; then
+    echo ">>> Step: 0a"
+    echo "$(head -n 1 ${OUTFILE})"
+    EXISTING_FIRST_LINE=$(head -n 1 ${OUTFILE})
+    echo ">>> Step: 0b"
+    if [ "${FIRST_LINE}" = "${EXISTING_FIRST_LINE}" ]; then
+        echo "${FIRST_LINE}" is already up to date.
+        exit 0
+    fi
+    echo ">>> Step: 0c"
 fi
-echo ">>> Step: 0c"
 
 # Write the file.
 
