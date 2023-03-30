@@ -78,10 +78,10 @@ echo ""
 git status
 echo ">>> Step: 1"
 
-echo "git checkout ${GITHUB_REF}"
-git checkout "${GITHUB_REF}"
-git status
-echo ">>> Step: 2"
+#echo "git checkout ${GITHUB_REF}"
+#git checkout "${GITHUB_REF}"
+#git status
+#echo ">>> Step: 2"
 
 git add ${OUTFILE}
 git status
@@ -91,7 +91,11 @@ git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION
 git status
 echo ">>> Step: 4"
 
-git push --delete origin "${GITHUB_REF}"
+git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
+git status
+echo ">>> Step: 5"
+
+git push origin --tags
 git status
 echo ">>> Step: 5"
 
