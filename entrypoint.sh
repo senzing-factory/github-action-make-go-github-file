@@ -105,8 +105,8 @@ gh pr create \
 
 # Checkout tag.
 
-echo ">>>>>>>> git checkout -b \"${GITHUB_REF}\""
-git checkout -b "${GITHUB_REF}"
+echo ">>>>>>>> git checkout \"${GITHUB_REF}\""
+git checkout "${GITHUB_REF}"
 git status
 
 # Write the file into the branch.
@@ -143,7 +143,7 @@ git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILEN
 git status
 
 echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
-git push origin "${GITHUB_REF}:${GITHUB_REF}"
+git push origin "HEAD:${GITHUB_REF}"
 git status
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
