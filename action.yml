@@ -1,41 +1,30 @@
 # action.yml
-name: Create a version.go file
-description: Create a version.go file containing the current GitHub release information.
+name: Create a github.go file
+description: Create a github.go file containing the current GitHub release information.
 author: support@senzing.com
 inputs:
    file:
-      description: 'The file to create. Default: cmd/version.go'
+      description: "The file to create. Default: cmd/github.go"
       required: false
       default: cmd/github.go
    package:
-      description: 'The package name for the package statement. Default: cmd'
+      description: "The package name for the package statement. Default: cmd"
       required: false
       default: cmd
 
 runs:
    using: composite
    steps:
-   -  name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-         fetch-depth: '0'     
-   -  name: run file
-      run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }}
-      shell: bash
-      env:
-       GH_TOKEN: ${{ github.token }}      
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+           fetch-depth: "0"
+      - name: run file
+        run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }}
+        shell: bash
+        env:
+           GH_TOKEN: ${{ github.token }}
 
-
-#runs:
 branding:
    icon: git-pull-request
    color: red
-# ------------------
-# Orphaned comments:
-
-# ------------------
-# Was at begin of line:34 :#  using: "docker"
-# Was at begin of line:35 :#  image: "Dockerfile"
-# Was at begin of line:36 :#  args:
-# Was at begin of line:37 :#    - ${{ inputs.file }}
-# Was at begin of line:38 :#    - ${{ inputs.package }}
