@@ -27,13 +27,14 @@ cd "${GITHUB_WORKSPACE}" || exit
 env | sort
 pwd
 
-# Synthesize variables for file.
+# Synthesize variables.
 
 RELEASE_REPOSITORY_NAME=$(basename ${GITHUB_REPOSITORY})
 RELEASE_VERSION=${GITHUB_REF_NAME}
 RELEASE_ITERATION="0"
 RELEASE_DATE=$(date +%Y-%m-%d)
 OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
+NEW_BRANCH_NAME="make-go-version-file.yaml/${RELEASE_VERSION}"
 
 # Check if file is already up-to-date.
 
@@ -51,10 +52,12 @@ if [ -f ${OUTFILE} ]; then
     echo ">>> Step: 0c"
 fi
 
-# Work in main branch.
+#------------------------------------------------------------------------------
+# Make a Pull Request for main branch.
+#------------------------------------------------------------------------------
 
 echo "git checkout main"
-git checkout main
+git checkout -b "${NEW_BRANCH_NAME}"
 git status
 echo ">>> Step: 1"
 
@@ -83,10 +86,10 @@ cat ${OUTFILE}
 
 # Delete tag on GitHub.  Similar to --delete.
 
-echo "git push origin :${GITHUB_REF}"
-git push origin ":${GITHUB_REF}"
-git status
-echo ">>> Step: 2"
+#echo "git push origin :${GITHUB_REF}"
+#git push origin ":${GITHUB_REF}"
+#git status
+#echo ">>> Step: 2"
 
 echo "git add ${OUTFILE}"
 git add ${OUTFILE}
@@ -103,17 +106,24 @@ git push
 git status
 echo ">>> Step: 5"
 
-echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
-git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
-git status
-echo ">>> Step: 6"
+gh pr create \
+    --head "${NEW_BRANCH_NAME}" \
+    --title "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+echo ">>> Step: 5"
 
-echo "git push origin --tags"
-git push origin --tags
-git status
-echo ">>> Step: 7"
+#echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
+#git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
+#git status
+#echo ">>> Step: 6"
+
+#echo "git push origin --tags"
+#git push origin --tags
+#git status
+#echo ">>> Step: 7"
 
 
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
+
+echo ">>> Step: 99"
