@@ -13,11 +13,27 @@ inputs:
     default: 'cmd'
         
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args: 
-    - ${{ inputs.file }}
-    - ${{ inputs.package }}  
+  using: "composite"
+  steps:  
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: '0'
+    - name: gh version
+      run: gh --version
+    - name: run file
+      run: ${{ github.action_path }}/entrypoint.sh
+      with:
+        file: ${{ inputs.file }}
+        package: ${{ inputs.package }}         
+        
+              
+#runs:
+#  using: "docker"
+#  image: "Dockerfile"
+#  args: 
+#    - ${{ inputs.file }}
+#    - ${{ inputs.package }}  
     
 branding:
   icon: "git-pull-request"
