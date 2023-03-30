@@ -51,6 +51,12 @@ if [ -f ${OUTFILE} ]; then
     echo ">>> Step: 0c"
 fi
 
+# Work in main branch.
+
+git checkout main
+git status
+echo ">>> Step: 1"
+
 # Write the file.
 
 echo "${FIRST_LINE}"
@@ -74,34 +80,25 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
-echo ""
-git status
-echo ">>> Step: 1"
-
-#echo "git checkout ${GITHUB_REF}"
-#git checkout "${GITHUB_REF}"
-#git status
-#echo ">>> Step: 2"
-
 git add ${OUTFILE}
 git status
-echo ">>> Step: 3"
+echo ">>> Step: 2"
 
 git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
-echo ">>> Step: 4"
+echo ">>> Step: 3"
 
-git push origin ":${GITHUB_REF_NAME}"
+git push
 git status
-echo ">>> Step: 6"
+echo ">>> Step: 4"
 
 git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
 git status
-echo ">>> Step: 7"
+echo ">>> Step: 6"
 
 git push origin --tags
 git status
-echo ">>> Step: 8"
+echo ">>> Step: 7"
 
 
 
