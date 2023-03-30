@@ -19,8 +19,11 @@ runs:
       uses: actions/checkout@v3
       with:
          fetch-depth: '0'
+   -  name: echo run file
+      run: echo ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }}
+      shell: bash         
    -  name: run file
-      run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }}.
+      run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }}
       shell: bash
 
 

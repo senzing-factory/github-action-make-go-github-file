@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+echo $@
+
 # Input parameters.
 
 INPUT_FILENAME=$1
