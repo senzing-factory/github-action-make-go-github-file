@@ -48,11 +48,13 @@ fi
 # Make a Pull Request for main branch.
 #------------------------------------------------------------------------------
 
+# Make a new branch.
+
 echo ">>> git checkout -b \"${NEW_BRANCH_NAME}\""
 git checkout -b "${NEW_BRANCH_NAME}"
 git status
 
-# Write the file.
+# Write the file into the branch.
 
 echo "${FIRST_LINE}" > ${OUTFILE}
 echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
@@ -75,7 +77,7 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
-# Commit the file to the branch on origin.
+# Commit the file to the branch and push branch to origin.
 
 echo ">>> git add ${OUTFILE}"
 git add ${OUTFILE}
@@ -101,22 +103,48 @@ gh pr create \
 # Update the tagged version.
 #------------------------------------------------------------------------------
 
-# Delete tag on GitHub.  Similar to --delete.
+# Checkout tag.
 
-#echo "git push origin :${GITHUB_REF}"
-#git push origin ":${GITHUB_REF}"
-#git status
-#echo ">>> Step: 2"
+echo ">>> git checkout -b \"${GITHUB_REF}\""
+git checkout -b "${GITHUB_REF}"
+git status
 
-#echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
-#git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
-#git status
-#echo ">>> Step: 6"
+# Write the file into the branch.
 
-#echo "git push origin --tags"
-#git push origin --tags
-#git status
-#echo ">>> Step: 7"
+echo "${FIRST_LINE}" > ${OUTFILE}
+echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
+echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
+echo "" >> ${OUTFILE}
+echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
+echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
+echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
+echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
+echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
+echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
+echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
+echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
+echo "" >> ${OUTFILE}
+
+# Inspect the file.
+
+echo ""
+echo "Contents of ${OUTFILE}:"
+echo ""
+cat ${OUTFILE}
+
+# Replace tag on GitHub.
+
+echo ">>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
+git push origin ":${GITHUB_REF}"
+git status
+
+echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
+git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
+git status
+
+echo "git push origin --tags"
+git push origin --tags
+git status
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
