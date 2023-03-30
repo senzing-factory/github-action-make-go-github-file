@@ -91,13 +91,17 @@ git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION
 git status
 echo ">>> Step: 4"
 
+git push origin ":${GITHUB_REF_NAME}"
+git status
+echo ">>> Step: 6"
+
 git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
 git status
-echo ">>> Step: 5"
+echo ">>> Step: 7"
 
 git push origin --tags
 git status
-echo ">>> Step: 5"
+echo ">>> Step: 8"
 
 
 
