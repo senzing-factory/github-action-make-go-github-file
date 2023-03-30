@@ -22,10 +22,12 @@ runs:
    -  name: gh version
       run: gh --version
       shell: bash
+   -  name: env
+      run: env | sort
+      shell: bash
    -  name: run file
       run: ${{ github.action_path }}/entrypoint.sh
       shell: bash
-
 
 
 #runs:
