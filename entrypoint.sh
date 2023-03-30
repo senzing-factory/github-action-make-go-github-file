@@ -56,10 +56,9 @@ fi
 # Make a Pull Request for main branch.
 #------------------------------------------------------------------------------
 
-echo "git checkout main"
+echo ">>> git checkout -b \"${NEW_BRANCH_NAME}\""
 git checkout -b "${NEW_BRANCH_NAME}"
 git status
-echo ">>> Step: 1"
 
 # Write the file.
 
@@ -91,25 +90,22 @@ cat ${OUTFILE}
 #git status
 #echo ">>> Step: 2"
 
-echo "git add ${OUTFILE}"
+echo ">>> git add ${OUTFILE}"
 git add ${OUTFILE}
 git status
-echo ">>> Step: 3"
 
-echo "git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+echo ">>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
-echo ">>> Step: 4"
 
-echo "git push"
-git push
+echo ">>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
+git push --set-upstream origin "${NEW_BRANCH_NAME}"
 git status
-echo ">>> Step: 5"
 
+echo ">>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 gh pr create \
     --head "${NEW_BRANCH_NAME}" \
     --title "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
-echo ">>> Step: 5"
 
 #echo "git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
 #git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
@@ -126,4 +122,4 @@ echo ">>> Step: 5"
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
 
-echo ">>> Step: 99"
+echo ">>> Done"
