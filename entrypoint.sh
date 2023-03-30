@@ -142,8 +142,8 @@ echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Upd
 git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
 git status
 
-echo ">>>>>>>> git push origin --tags \"${GITHUB_REF}\""
-git push origin --tags "${GITHUB_REF}"
+echo ">>>>>>>> git push origin --tags \"${GITHUB_REF_NAME}\""
+git push origin --tags "${GITHUB_REF_NAME}"
 git status
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
