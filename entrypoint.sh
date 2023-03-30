@@ -35,8 +35,19 @@ RELEASE_ITERATION="0"
 RELEASE_DATE=$(date +%Y-%m-%d)
 OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
 
+# Check if file is already up-to-date.
+
+FIRST_LINE="// ${RELEASE_VERSION}"
+EXISTING_FIRST_LINE=$(head -n 1 ${OUTFILE})
+
+if [ "${FIRST_LINE}" = "${EXISTING_FIRST_LINE}" ]; then
+    echo "${FIRST_LINE}" is already up to date.
+    exit 0
+fi
+
 # Write the file.
 
+echo "${FIRST_LINE}"
 echo "// Created by make-go-version-file.yaml on $(date)" > ${OUTFILE}
 echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
 echo "" >> ${OUTFILE}
@@ -74,7 +85,7 @@ git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION
 git status
 echo ">>> Step: 4"
 
-git push origin "HEAD:${GITHUB_REF}"
+git push --delete origin "HEAD:${GITHUB_REF}"
 git status
 echo ">>> Step: 5"
 
