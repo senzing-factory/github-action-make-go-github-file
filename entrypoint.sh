@@ -132,6 +132,16 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
+# Commit the file to the branch and push branch to origin.
+
+echo ">>>>>>>> git add ${OUTFILE}"
+git add ${OUTFILE}
+git status
+
+echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+git status
+
 # Replace tag on GitHub.
 
 echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
