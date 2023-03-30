@@ -57,13 +57,25 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
+echo ""
 git status
+echo ">>> Step: 1"
+
+git checkout ${GITHUB_REF}
+git status
+echo ">>> Step: 2"
+
 git add ${OUTFILE}
 git status
+echo ">>> Step: 3"
+
 git commit -m "Create ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
+echo ">>> Step: 4"
+
 git push origin
 git status
+echo ">>> Step: 5"
 
 
 
