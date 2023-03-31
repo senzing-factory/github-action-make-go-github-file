@@ -1,7 +1,8 @@
 # action.yml
 name: Create a github.go file
-description: Create a github.go file containing the current GitHub release information.
+description: Create a github.go file containing GitHub release information.
 author: support@senzing.com
+
 inputs:
    file:
       description: "The file to create. Default: cmd/github.go"
