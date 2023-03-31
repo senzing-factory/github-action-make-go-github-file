@@ -133,8 +133,8 @@ echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAM
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 
-echo ">>>>>>>> git push"
-git push
+echo ">>>>>>>> git push --set-upstream origin \"${NEW_TAG_BRANCH_NAME}\""
+git push --set-upstream origin "${NEW_TAG_BRANCH_NAME}"
 git status
 
 # Delete and recreate tag locally.
