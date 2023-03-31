@@ -78,12 +78,15 @@ RELEASE_NAME=$(gh release view --json name | jq -r .name)
 RELEASE_TAGNAME=$(gh release view --json tagName | jq -r .tagName)
 
 echo "-------------------------------------------------------------------------"
-echo "-- Status"
+echo "-- Status                                                              --"
 echo "-------------------------------------------------------------------------"
 
 echo "   RELEASE_BODY: ${RELEASE_BODY}"
 echo "   RELEASE_NAME: ${RELEASE_NAME}"
 echo "RELEASE_TAGNAME: ${RELEASE_TAGNAME}"
+
+echo ">>>>>>>> git status  ----------------------------------------------------"
+git status
 
 echo ">>>>>>>> git tag --list  ------------------------------------------------"
 git tag --list
@@ -97,7 +100,12 @@ gh pr list
 echo ">>>>>>>> gh release view  -----------------------------------------------"
 gh release view
 
-echo "-------- xxxxxxxx -------------------------------------------------------"
+echo ">>>>>>>> env | grep GITHUB_ | sort --------------------------------------"
+env | grep "GITHUB_" | sort
+
+echo "-------------------------------------------------------------------------"
+echo "-- Xxxxx                                                               --"
+echo "-------------------------------------------------------------------------"
 
 echo ">>>>>>>> gh release delete \"${RELEASE_VERSION}\" --cleanup-tag  --------"
 gh release delete \
