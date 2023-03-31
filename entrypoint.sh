@@ -169,7 +169,7 @@ echo ">>>>>>>> gh release create \"${RELEASE_VERSION}\" --latest --target \"${GI
 gh release create \
     "${RELEASE_VERSION}" \
     --latest \
-    --target "${GITHUB_REF}" \
+    --target "${GITHUB_REF_NAME}" \
     --notes "${RELEASE_BODY}"
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
