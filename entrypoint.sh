@@ -89,6 +89,10 @@ echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAM
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 
+
+echo ">>>>>>>> gh release view"
+gh release view
+
 # Replace tag on GitHub.
 
 echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
