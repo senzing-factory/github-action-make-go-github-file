@@ -10,12 +10,11 @@ write_file() {
     echo ""                                                                  >> ${OUTFILE}
     echo "var githubDate            string = \"${RELEASE_DATE}\""            >> ${OUTFILE}
     echo "var githubIteration       string = \"${RELEASE_ITERATION}\""       >> ${OUTFILE}
-    echo "var githubRef             string = \"${GITHUB_REF}\""              >> ${OUTFILE}
-    echo "var githubRefName         string = \"${GITHUB_REF_NAME}\""         >> ${OUTFILE}
+    echo "var githubRef             string = \"refs/tags/${NEXT_VERSION}\""  >> ${OUTFILE}
+    echo "var githubRefName         string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
     echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\""       >> ${OUTFILE}
     echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-    echo "var githubSha             string = \"${GITHUB_SHA}\""              >> ${OUTFILE}
-    echo "var githubVersion         string = \"${RELEASE_VERSION}\""         >> ${OUTFILE}
+    echo "var githubVersion         string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
     echo ""                                                                  >> ${OUTFILE}
 }
 
@@ -48,16 +47,32 @@ cd "${GITHUB_WORKSPACE}" || exit
 # Synthesize variables.
 
 RELEASE_REPOSITORY_NAME=$(basename ${GITHUB_REPOSITORY})
-RELEASE_VERSION=${GITHUB_REF_NAME}
 RELEASE_ITERATION="0"
 RELEASE_DATE=$(date +%Y-%m-%d)
 OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
-NEW_MAIN_BRANCH_NAME="make-go-version-file.yaml/main/${RELEASE_VERSION}"
-NEW_TAG_BRANCH_NAME="make-go-version-file.yaml/tag/${RELEASE_VERSION}"
+
+# Calculate next semantic version.
+
+VERSION="${GITHUB_REF_NAME}"
+VERSION="${VERSION#[vV]}"
+VERSION_MAJOR="${VERSION%%\.*}"
+VERSION_MINOR="${VERSION#*.}"
+VERSION_MINOR="${VERSION_MINOR%.*}"
+VERSION_PATCH="${VERSION##*.}"
+NEXT_VERSION_PATCH=$((1+${VERSION_PATCH}))
+
+echo "Version: ${VERSION}"
+echo "Version      [major]: ${VERSION_MAJOR}"
+echo "Version      [minor]: ${VERSION_MINOR}"
+echo "Version      [patch]: ${VERSION_PATCH}"
+echo "Version [next-patch]: ${NEXT_VERSION_PATCH}"
+
+NEXT_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${NEXT_VERSION_PATCH}"
+NEXT_BRANCH_NAME="make-go-version-file.yaml/${NEXT_VERSION}"
 
 # Check if file is already up-to-date.
 
-FIRST_LINE="// ${RELEASE_VERSION}"
+FIRST_LINE="// ${NEXT_VERSION}"
 
 if [ -f ${OUTFILE} ]; then
     EXISTING_FIRST_LINE=$(head -n 1 ${OUTFILE})
@@ -68,156 +83,13 @@ if [ -f ${OUTFILE} ]; then
 fi
 
 #------------------------------------------------------------------------------
-# Update the tagged version.
-#------------------------------------------------------------------------------
-
-# Get information from new release then delete the release.
-
-RELEASE_BODY=$(gh release view --json body | jq -r .body)
-RELEASE_NAME=$(gh release view --json name | jq -r .name)
-RELEASE_TAGNAME=$(gh release view --json tagName | jq -r .tagName)
-
-echo "-------------------------------------------------------------------------"
-echo "-- Status                                                              --"
-echo "-------------------------------------------------------------------------"
-
-echo "   RELEASE_BODY: ${RELEASE_BODY}"
-echo "   RELEASE_NAME: ${RELEASE_NAME}"
-echo "RELEASE_TAGNAME: ${RELEASE_TAGNAME}"
-
-echo ">>>>>>>> git status  ----------------------------------------------------"
-git status
-
-echo ">>>>>>>> git tag --list  ------------------------------------------------"
-git tag --list
-
-echo ">>>>>>>> git branch --list  ---------------------------------------------"
-git branch --list
-
-echo ">>>>>>>> gh pr list -----------------------------------------------------"
-gh pr list
-
-echo ">>>>>>>> gh release view  -----------------------------------------------"
-gh release view
-
-echo ">>>>>>>> env | grep GITHUB_ | sort --------------------------------------"
-env | grep "GITHUB_" | sort
-
-echo "-------------------------------------------------------------------------"
-echo "-- Xxxxx                                                               --"
-echo "-------------------------------------------------------------------------"
-
-echo ">>>>>>>> gh release delete \"${RELEASE_VERSION}\" --cleanup-tag  --------"
-gh release delete \
-    "${RELEASE_VERSION}" \
-    --cleanup-tag \
-    --yes
-
-echo ">>>>>>>> git tag --list  ------------------------------------------------"
-git tag --list
-
-echo ">>>>>>>> git branch --list  ---------------------------------------------"
-git branch --list
-
-# Make a new branch.
-
-echo ">>>>>>>> git branch \"${NEW_TAG_BRANCH_NAME}\" \"${GITHUB_REF_NAME}\"  --"
-git branch "${NEW_TAG_BRANCH_NAME}" "${GITHUB_REF_NAME}"
-git status
-
-echo ">>>>>>>> git branch --list  ---------------------------------------------"
-git branch --list
-
-echo ">>>>>>>> git checkout \"${NEW_TAG_BRANCH_NAME}\"  -----------------------"
-git checkout "${NEW_TAG_BRANCH_NAME}"
-git status
-
-# Write the file into the branch.
-
-write_file
-
-# Inspect the file.
-
-echo ""
-echo "Contents of ${OUTFILE}:"
-echo ""
-cat ${OUTFILE}
-
-# Commit the file to the branch and push branch to origin.
-
-echo ">>>>>>>> git add ${OUTFILE}  --------------------------------------------"
-git add ${OUTFILE}
-git status
-
-echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
-git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
-git status
-
-echo ">>>>>>>> git push --set-upstream origin \"${NEW_TAG_BRANCH_NAME}\"  -----"
-git push --set-upstream origin "${NEW_TAG_BRANCH_NAME}"
-git status
-
-# Delete and recreate tag locally.
-
-echo ">>>>>>>> git tag --delete \"${GITHUB_REF_NAME}\"  -----------------------"
-git tag --delete "${GITHUB_REF_NAME}"
-git status
-
-echo ">>>>>>>> git tag \"${GITHUB_REF_NAME}\"  --------------------------------"
-git tag "${GITHUB_REF_NAME}"
-git status
-
-# Delete and recreate tag remotely.
-
-#echo ">>>>>>>> git push origin \":${GITHUB_REF_NAME}\"  ----------------------"
-#git push origin ":${GITHUB_REF_NAME}"
-#git status
-
-echo ">>>>>>>> git push origin \"${GITHUB_REF_NAME}\"  ------------------------"
-git push origin "${GITHUB_REF_NAME}"
-git status
-
-
-echo ">>>>>>>> gh release view  -----------------------------------------------"
-gh release view
-
-# Replace tag on GitHub.
-
-#echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
-#git push origin ":${GITHUB_REF}"
-#git status
-
-#echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
-#git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
-#git status
-
-#echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
-#git push origin "HEAD:${GITHUB_REF}"#
-#git status
-
-
-echo ">>>>>>>> gh release create \"${RELEASE_VERSION}\" --latest --target \"${GITHUB_REF_NAME}\" --notes \"${RELEASE_BODY}\""
-gh release create \
-    "${RELEASE_VERSION}" \
-    --latest \
-    --target "${GITHUB_REF_NAME}" \
-    --notes "${RELEASE_BODY}"
-
-# git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
-# git push origin --tags
-
-echo ">>>>>>>> Done"
-
-exit 0   # Debug
-
-#------------------------------------------------------------------------------
 # Make a Pull Request for main branch.
 #------------------------------------------------------------------------------
 
 # Make a new branch.
 
-echo ">>>>>>>> git checkout -b \"${NEW_MAIN_BRANCH_NAME}\""
-git checkout -b "${NEW_MAIN_BRANCH_NAME}"
+echo ">>>>>>>> git checkout -b \"${NEXT_BRANCH_NAME}\""
+git checkout -b "${NEXT_BRANCH_NAME}"
 git status
 
 # Write the file into the branch.
@@ -237,21 +109,21 @@ echo ">>>>>>>> git add ${OUTFILE}"
 git add ${OUTFILE}
 git status
 
-echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
-git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
+git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
 git status
 
-echo ">>>>>>>> git push --set-upstream origin \"${NEW_MAIN_BRANCH_NAME}\""
-git push --set-upstream origin "${NEW_MAIN_BRANCH_NAME}"
+echo ">>>>>>>> git push --set-upstream origin \"${NEXT_BRANCH_NAME}\""
+git push --set-upstream origin "${NEXT_BRANCH_NAME}"
 git status
 
 # Create a Pull Request for the branch.
 
-echo ">>>>>>>> gh pr create --head \"${NEW_MAIN_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+echo ">>>>>>>> gh pr create --head \"${NEXT_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
 gh pr create \
-    --head "${NEW_MAIN_BRANCH_NAME}" \
-    --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${RELEASE_VERSION}" \
-    --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+    --head "${NEXT_BRANCH_NAME}" \
+    --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${NEXT_VERSION}" \
+    --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
 
 echo ">>>>>>>> Done"
 
