@@ -130,9 +130,9 @@ git status
 
 # Delete and recreate tag remotely.
 
-echo ">>>>>>>> git push origin \":${GITHUB_REF_NAME}\""
-git push origin ":${GITHUB_REF_NAME}"
-git status
+#echo ">>>>>>>> git push origin \":${GITHUB_REF_NAME}\""
+#git push origin ":${GITHUB_REF_NAME}"
+#git status
 
 echo ">>>>>>>> git push origin \"${GITHUB_REF_NAME}\""
 git push origin "${GITHUB_REF_NAME}"
