@@ -165,7 +165,7 @@ gh release view
 #git status
 
 
-echo ">>>>>>>> gh release create \"${RELEASE_VERSION}\" --latest --target \"${GITHUB_REF}\" --notes \"${RELEASE_BODY}\""
+echo ">>>>>>>> gh release create \"${RELEASE_VERSION}\" --latest --target \"${GITHUB_REF_NAME}\" --notes \"${RELEASE_BODY}\""
 gh release create \
     "${RELEASE_VERSION}" \
     --latest \
