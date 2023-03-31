@@ -71,7 +71,7 @@ fi
 # Update the tagged version.
 #------------------------------------------------------------------------------
 
-# Get information from new release.
+# Get information from new release then delete the release.
 
 RELEASE_BODY=$(gh release view --json body | jq -r .body)
 RELEASE_NAME=$(gh release view --json name | jq -r .name)
@@ -80,6 +80,12 @@ RELEASE_TAGNAME=$(gh release view --json tagName | jq -r .tagName)
 echo "   RELEASE_BODY: ${RELEASE_BODY}"
 echo "   RELEASE_NAME: ${RELEASE_NAME}"
 echo "RELEASE_TAGNAME: ${RELEASE_TAGNAME}"
+
+echo ">>>>>>>> gh release delete \"${RELEASE_VERSION}\" --cleanup-tag"
+gh release delete \
+    "${RELEASE_VERSION}" \
+    --cleanup-tag \
+    --yes
 
 # Make a new branch.
 
@@ -158,9 +164,10 @@ gh release view
 #git push origin "HEAD:${GITHUB_REF}"#
 #git status
 
-echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
+
+echo ">>>>>>>> gh release create \"${RELEASE_VERSION}\" --latest --target \"${GITHUB_REF}\" --notes \"${RELEASE_BODY}\""
 gh release create \
-    ${RELEASE_VERSION} \
+    "${RELEASE_VERSION}" \
     --latest \
     --target "${GITHUB_REF}" \
     --notes "${RELEASE_BODY}"
