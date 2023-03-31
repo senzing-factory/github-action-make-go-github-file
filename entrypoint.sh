@@ -112,13 +112,17 @@ echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAM
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 
-echo ">>>>>>>> git tag \"${GITHUB_REF_NAME}\""
-git tag "${GITHUB_REF_NAME}"
-git status
+# Delete and recreate tag locally.
 
 echo ">>>>>>>> git tag --delete \"${GITHUB_REF_NAME}\""
 git tag --delete "${GITHUB_REF_NAME}"
 git status
+
+echo ">>>>>>>> git tag \"${GITHUB_REF_NAME}\""
+git tag "${GITHUB_REF_NAME}"
+git status
+
+# Delete and recreate tag remotely.
 
 echo ">>>>>>>> git push origin \":${GITHUB_REF_NAME}\""
 git push origin ":${GITHUB_REF_NAME}"
