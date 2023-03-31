@@ -81,17 +81,32 @@ echo "   RELEASE_BODY: ${RELEASE_BODY}"
 echo "   RELEASE_NAME: ${RELEASE_NAME}"
 echo "RELEASE_TAGNAME: ${RELEASE_TAGNAME}"
 
+echo ">>>>>>>> git tag --list"
+git tag --list
+
+echo ">>>>>>>> git branch --list"
+git branch --list
+
 echo ">>>>>>>> gh release delete \"${RELEASE_VERSION}\" --cleanup-tag"
 gh release delete \
     "${RELEASE_VERSION}" \
     --cleanup-tag \
     --yes
 
+echo ">>>>>>>> git tag --list"
+git tag --list
+
+echo ">>>>>>>> git branch --list"
+git branch --list
+
 # Make a new branch.
 
 echo ">>>>>>>> git branch \"${NEW_TAG_BRANCH_NAME}\" \"${GITHUB_REF_NAME}\""
 git branch "${NEW_TAG_BRANCH_NAME}" "${GITHUB_REF_NAME}"
 git status
+
+echo ">>>>>>>> git branch --list"
+git branch --list
 
 echo ">>>>>>>> git checkout \"${NEW_TAG_BRANCH_NAME}\""
 git checkout "${NEW_TAG_BRANCH_NAME}"
@@ -116,6 +131,10 @@ git status
 
 echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+git status
+
+echo ">>>>>>>> git push"
+git push
 git status
 
 # Delete and recreate tag locally.
