@@ -155,8 +155,8 @@ gh release view
 #git status
 
 #echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
-git push origin "HEAD:${GITHUB_REF}"#
-git status
+#git push origin "HEAD:${GITHUB_REF}"#
+#git status
 
 echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
 gh release create \
