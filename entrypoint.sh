@@ -1,6 +1,28 @@
 #!/bin/sh
 set -eu
 
+# Function: write_file()
+
+write_file() {
+    echo "${FIRST_LINE}"                                                      > ${OUTFILE}
+    echo "// Created by make-go-version-file.yaml on $(date)"                >> ${OUTFILE}
+    echo "package ${INPUT_PACKAGE}"                                          >> ${OUTFILE}
+    echo ""                                                                  >> ${OUTFILE}
+    echo "var githubDate            string = \"${RELEASE_DATE}\""            >> ${OUTFILE}
+    echo "var githubIteration       string = \"${RELEASE_ITERATION}\""       >> ${OUTFILE}
+    echo "var githubRef             string = \"${GITHUB_REF}\""              >> ${OUTFILE}
+    echo "var githubRefName         string = \"${GITHUB_REF_NAME}\""         >> ${OUTFILE}
+    echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\""       >> ${OUTFILE}
+    echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
+    echo "var githubSha             string = \"${GITHUB_SHA}\""              >> ${OUTFILE}
+    echo "var githubVersion         string = \"${RELEASE_VERSION}\""         >> ${OUTFILE}
+    echo ""                                                                  >> ${OUTFILE}
+}
+
+#------------------------------------------------------------------------------
+# Main
+#------------------------------------------------------------------------------
+
 # Input parameters.
 
 INPUT_FILENAME=$1
@@ -30,7 +52,8 @@ RELEASE_VERSION=${GITHUB_REF_NAME}
 RELEASE_ITERATION="0"
 RELEASE_DATE=$(date +%Y-%m-%d)
 OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
-NEW_BRANCH_NAME="make-go-version-file.yaml/${RELEASE_VERSION}"
+NEW_MAIN_BRANCH_NAME="make-go-version-file.yaml/main/${RELEASE_VERSION}"
+NEW_TAG_BRANCH_NAME="make-go-version-file.yaml/tag/${RELEASE_VERSION}"
 
 # Check if file is already up-to-date.
 
@@ -44,33 +67,33 @@ if [ -f ${OUTFILE} ]; then
     fi
 fi
 
-
-
 #------------------------------------------------------------------------------
 # Update the tagged version.
 #------------------------------------------------------------------------------
 
-# Checkout tag.
+# Get information from new release.
 
-echo ">>>>>>>> git checkout \"${GITHUB_REF}\""
-git checkout "${GITHUB_REF}"
+RELEASE_BODY=$(gh release view --json body | jq -r .body)
+RELEASE_NAME=$(gh release view --json name | jq -r .name)
+RELEASE_TAGNAME=$(gh release view --json tagName | jq -r .tagName)
+
+echo "   RELEASE_BODY: ${RELEASE_BODY}"
+echo "   RELEASE_NAME: ${RELEASE_NAME}"
+echo "RELEASE_TAGNAME: ${RELEASE_TAGNAME}"
+
+# Make a new branch.
+
+echo ">>>>>>>> git branch \"${NEW_TAG_BRANCH_NAME}\" \"${GITHUB_REF_NAME}\""
+git branch "${NEW_TAG_BRANCH_NAME}" "${GITHUB_REF_NAME}"
+git status
+
+echo ">>>>>>>> git checkout \"${NEW_TAG_BRANCH_NAME}\""
+git checkout "${NEW_TAG_BRANCH_NAME}"
 git status
 
 # Write the file into the branch.
 
-echo "${FIRST_LINE}" > ${OUTFILE}
-echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
-echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
-echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
-echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
-echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
-echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
-echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
-echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
-echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
+write_file
 
 # Inspect the file.
 
@@ -89,6 +112,30 @@ echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAM
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 
+echo ">>>>>>>> git tag \"${GITHUB_REF_NAME}\""
+git tag "${GITHUB_REF_NAME}"
+git status
+
+echo ">>>>>>>> git tag --delete \"${GITHUB_REF_NAME}\""
+git tag --delete "${GITHUB_REF_NAME}"
+git status
+
+echo ">>>>>>>> git push origin \":${GITHUB_REF_NAME}\""
+git push origin ":${GITHUB_REF_NAME}"
+git status
+
+echo ">>>>>>>> git push origin \"${GITHUB_REF_NAME}\""
+git push origin "${GITHUB_REF_NAME}"
+git status
+
+
+
+
+
+
+
+
+
 
 echo ">>>>>>>> gh release view"
 gh release view
@@ -99,13 +146,20 @@ gh release view
 #git push origin ":${GITHUB_REF}"
 #git status
 
-echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
-git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
+#echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
+#git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
+#git status
+
+#echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
+git push origin "HEAD:${GITHUB_REF}"#
 git status
 
 echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
-git push origin "HEAD:${GITHUB_REF}"
-git status
+gh release create \
+    ${RELEASE_VERSION} \
+    --latest \
+    --target "${GITHUB_REF}" \
+    --notes "${RELEASE_BODY}"
 
 # git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
 # git push origin --tags
@@ -120,25 +174,13 @@ exit 0   # Debug
 
 # Make a new branch.
 
-echo ">>>>>>>> git checkout -b \"${NEW_BRANCH_NAME}\""
-git checkout -b "${NEW_BRANCH_NAME}"
+echo ">>>>>>>> git checkout -b \"${NEW_MAIN_BRANCH_NAME}\""
+git checkout -b "${NEW_MAIN_BRANCH_NAME}"
 git status
 
 # Write the file into the branch.
 
-echo "${FIRST_LINE}" > ${OUTFILE}
-echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
-echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
-echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
-echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
-echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
-echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
-echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
-echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
-echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
+write_file
 
 # Inspect the file.
 
@@ -157,15 +199,15 @@ echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAM
 git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 git status
 
-echo ">>>>>>>> git push --set-upstream origin \"${NEW_BRANCH_NAME}\""
-git push --set-upstream origin "${NEW_BRANCH_NAME}"
+echo ">>>>>>>> git push --set-upstream origin \"${NEW_MAIN_BRANCH_NAME}\""
+git push --set-upstream origin "${NEW_MAIN_BRANCH_NAME}"
 git status
 
 # Create a Pull Request for the branch.
 
-echo ">>>>>>>> gh pr create --head \"${NEW_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+echo ">>>>>>>> gh pr create --head \"${NEW_MAIN_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
 gh pr create \
-    --head "${NEW_BRANCH_NAME}" \
+    --head "${NEW_MAIN_BRANCH_NAME}" \
     --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${RELEASE_VERSION}" \
     --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 
