@@ -1,10 +1,16 @@
 # github-action-make-go-github-file
 
-Make a github.go file
+## Synopsis
+
+Make a github.go file.
+
+## Overview
+
+The github action creates a pull request with updated values in `github.go`.
 
 ## Usage
 
-1. `.github/workflows/github-action-make-go-github-file.yaml` file
+1. `.github/workflows/make-go-github-file.yaml` file
    that creates a `cmd/github.go` file for "package cmd".
    Example:
 
@@ -29,7 +35,7 @@ Make a github.go file
             uses: Senzing/github-action-make-go-github-file@main
     ```
 
-1. `.github/workflows/github-action-make-go-github-file.yaml` file
+1. `.github/workflows/make-go-github-file.yaml` file
    that creates a `example/example.go` file for "package myexample".
    Example:
 
