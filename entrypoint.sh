@@ -95,9 +95,9 @@ gh release view
 
 # Replace tag on GitHub.
 
-echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
-git push origin ":${GITHUB_REF}"
-git status
+#echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
+#git push origin ":${GITHUB_REF}"
+#git status
 
 echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
 git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
