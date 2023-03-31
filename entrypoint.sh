@@ -5,7 +5,7 @@ set -eu
 
 write_file() {
     echo "${FIRST_LINE}"                                                      > ${OUTFILE}
-    echo "// Created by make-go-version-file.yaml on $(date)"                >> ${OUTFILE}
+    echo "// Created by make-go-github-file.yaml on $(date)"                >> ${OUTFILE}
     echo "package ${INPUT_PACKAGE}"                                          >> ${OUTFILE}
     echo ""                                                                  >> ${OUTFILE}
     echo "var githubDate            string = \"${RELEASE_DATE}\""            >> ${OUTFILE}
@@ -68,7 +68,7 @@ echo "Version      [patch]: ${VERSION_PATCH}"
 echo "Version [next-patch]: ${NEXT_VERSION_PATCH}"
 
 NEXT_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${NEXT_VERSION_PATCH}"
-NEXT_BRANCH_NAME="make-go-version-file.yaml/${NEXT_VERSION}"
+NEXT_BRANCH_NAME="make-go-github-file.yaml/${NEXT_VERSION}"
 
 # Check if file is already up-to-date.
 
@@ -109,8 +109,8 @@ echo ">>>>>>>> git add ${OUTFILE}"
 git add ${OUTFILE}
 git status
 
-echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
-git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
+echo ">>>>>>>> git commit -m \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
+git commit -m "make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
 git status
 
 echo ">>>>>>>> git push --set-upstream origin \"${NEXT_BRANCH_NAME}\""
@@ -119,11 +119,11 @@ git status
 
 # Create a Pull Request for the branch.
 
-echo ">>>>>>>> gh pr create --head \"${NEXT_BRANCH_NAME}\" --title \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\"  --body \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
+echo ">>>>>>>> gh pr create --head \"${NEXT_BRANCH_NAME}\" --title \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\"  --body \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
 gh pr create \
     --head "${NEXT_BRANCH_NAME}" \
-    --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${NEXT_VERSION}" \
-    --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
+    --title "make-go-github-file.yaml: ${INPUT_FILENAME}@${NEXT_VERSION}" \
+    --body "make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
 
 echo ">>>>>>>> Done"
 
