@@ -10,7 +10,7 @@ The github action creates a pull request with updated values in `github.go`.
 
 ## Usage
 
-1. `.github/workflows/make-go-github-file.yaml` file
+1. A `.github/workflows/make-go-github-file.yaml` file
    that creates a `cmd/github.go` file for "package cmd".
    Example:
 
@@ -35,7 +35,7 @@ The github action creates a pull request with updated values in `github.go`.
             uses: Senzing/github-action-make-go-github-file@main
     ```
 
-1. `.github/workflows/make-go-github-file.yaml` file
+1. A `.github/workflows/make-go-github-file.yaml` file
    that creates a `example/example.go` file for "package myexample".
    Example:
 
