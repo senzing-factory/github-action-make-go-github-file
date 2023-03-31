@@ -44,6 +44,76 @@ if [ -f ${OUTFILE} ]; then
     fi
 fi
 
+
+
+#------------------------------------------------------------------------------
+# Update the tagged version.
+#------------------------------------------------------------------------------
+
+# Checkout tag.
+
+echo ">>>>>>>> git checkout \"${GITHUB_REF}\""
+git checkout "${GITHUB_REF}"
+git status
+
+# Write the file into the branch.
+
+echo "${FIRST_LINE}" > ${OUTFILE}
+echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
+echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
+echo "" >> ${OUTFILE}
+echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
+echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
+echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
+echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
+echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
+echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
+echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
+echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
+echo "" >> ${OUTFILE}
+
+# Inspect the file.
+
+echo ""
+echo "Contents of ${OUTFILE}:"
+echo ""
+cat ${OUTFILE}
+
+# Commit the file to the branch and push branch to origin.
+
+echo ">>>>>>>> git add ${OUTFILE}"
+git add ${OUTFILE}
+git status
+
+echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
+git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
+git status
+
+
+echo ">>>>>>>> gh release view"
+gh release view
+
+# Replace tag on GitHub.
+
+echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
+git push origin ":${GITHUB_REF}"
+git status
+
+echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
+git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
+git status
+
+echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
+git push origin "HEAD:${GITHUB_REF}"
+git status
+
+# git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
+# git push origin --tags
+
+echo ">>>>>>>> Done"
+
+exit 0   # Debug
+
 #------------------------------------------------------------------------------
 # Make a Pull Request for main branch.
 #------------------------------------------------------------------------------
@@ -99,64 +169,5 @@ gh pr create \
     --title "make-go-version-file.yaml: ${INPUT_FILENAME}@${RELEASE_VERSION}" \
     --body "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
 
-#------------------------------------------------------------------------------
-# Update the tagged version.
-#------------------------------------------------------------------------------
-
-# Checkout tag.
-
-echo ">>>>>>>> git checkout \"${GITHUB_REF}\""
-git checkout "${GITHUB_REF}"
-git status
-
-# Write the file into the branch.
-
-echo "${FIRST_LINE}" > ${OUTFILE}
-echo "// Created by make-go-version-file.yaml on $(date)" >> ${OUTFILE}
-echo "package ${INPUT_PACKAGE}" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
-echo "var githubDate            string = \"${RELEASE_DATE}\"" >> ${OUTFILE}
-echo "var githubIteration       string = \"${RELEASE_ITERATION}\"" >> ${OUTFILE}
-echo "var githubRef             string = \"${GITHUB_REF}\"" >> ${OUTFILE}
-echo "var githubRefName         string = \"${GITHUB_REF_NAME}\"" >> ${OUTFILE}
-echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\"" >> ${OUTFILE}
-echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-echo "var githubSha             string = \"${GITHUB_SHA}\"" >> ${OUTFILE}
-echo "var githubVersion         string = \"${RELEASE_VERSION}\"" >> ${OUTFILE}
-echo "" >> ${OUTFILE}
-
-# Inspect the file.
-
-echo ""
-echo "Contents of ${OUTFILE}:"
-echo ""
-cat ${OUTFILE}
-
-# Commit the file to the branch and push branch to origin.
-
-echo ">>>>>>>> git add ${OUTFILE}"
-git add ${OUTFILE}
-git status
-
-echo ">>>>>>>> git commit -m \"make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}\""
-git commit -m "make-go-version-file.yaml updated ${INPUT_FILENAME} for versioned release: ${RELEASE_VERSION}"
-git status
-
-# Replace tag on GitHub.
-
-echo ">>>>>>>> git push origin \":${GITHUB_REF}\"  (to delete tag on origin)"
-git push origin ":${GITHUB_REF}"
-git status
-
-echo ">>>>>>>> git tag --force --annotate \"${GITHUB_REF_NAME}\" --message \"Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}.\""
-git tag --force --annotate "${GITHUB_REF_NAME}" --message "Updated ${INPUT_FILENAME} for ${GITHUB_REF_NAME}."
-git status
-
-echo ">>>>>>>> git push origin \"${GITHUB_REF}:${GITHUB_REF}\""
-git push origin "HEAD:${GITHUB_REF}"
-git status
-
-# git tag -a "v${GITHUB_REF_NAME}" -m "Go module tag for version ${GITHUB_REF_NAME} by ${GITHUB_ACTOR}" ${GITHUB_WORKFLOW_SHA}
-# git push origin --tags
-
 echo ">>>>>>>> Done"
+
