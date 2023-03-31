@@ -121,7 +121,7 @@ git branch --list
 
 # Make a new branch.
 
-echo ">>>>>>>> git branch \"${NEW_TAG_BRANCH_NAME}\" \"${GITHUB_REF_NAME}\""  -"
+echo ">>>>>>>> git branch \"${NEW_TAG_BRANCH_NAME}\" \"${GITHUB_REF_NAME}\"  --"
 git branch "${NEW_TAG_BRANCH_NAME}" "${GITHUB_REF_NAME}"
 git status
 
