@@ -4,18 +4,19 @@ set -eu
 # Function: write_file()
 
 write_file() {
-    echo "${FIRST_LINE}"                                                      > ${OUTFILE}
-    echo "// Created by make-go-github-file.yaml on $(date)"                >> ${OUTFILE}
-    echo "package ${INPUT_PACKAGE}"                                          >> ${OUTFILE}
-    echo ""                                                                  >> ${OUTFILE}
-    echo "var githubDate            string = \"${RELEASE_DATE}\""            >> ${OUTFILE}
-    echo "var githubIteration       string = \"${RELEASE_ITERATION}\""       >> ${OUTFILE}
-    echo "var githubRef             string = \"refs/tags/${NEXT_VERSION}\""  >> ${OUTFILE}
-    echo "var githubRefName         string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
-    echo "var githubRepository      string = \"${GITHUB_REPOSITORY}\""       >> ${OUTFILE}
-    echo "var githubRepositoryName  string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-    echo "var githubVersion         string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
-    echo ""                                                                  >> ${OUTFILE}
+    echo "${FIRST_LINE}"                                                   > ${OUTFILE}
+    echo "// Created by make-go-github-file.yaml on $(date)"              >> ${OUTFILE}
+    echo "package ${INPUT_PACKAGE}"                                       >> ${OUTFILE}
+    echo ""                                                               >> ${OUTFILE}
+    echo "var ("                                                          >> ${OUTFILE}
+    echo "\tgithubDate           string = \"${RELEASE_DATE}\""            >> ${OUTFILE}
+    echo "\tgithubIteration      string = \"${RELEASE_ITERATION}\""       >> ${OUTFILE}
+    echo "\tgithubRef            string = \"refs/tags/${NEXT_VERSION}\""  >> ${OUTFILE}
+    echo "\tgithubRefName        string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
+    echo "\tgithubRepository     string = \"${GITHUB_REPOSITORY}\""       >> ${OUTFILE}
+    echo "\tgithubRepositoryName string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
+    echo "\tgithubVersion        string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
+    echo ")"                                                              >> ${OUTFILE}
 }
 
 #------------------------------------------------------------------------------
