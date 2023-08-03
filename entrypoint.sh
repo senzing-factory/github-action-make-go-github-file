@@ -27,7 +27,6 @@ write_file() {
 
 INPUT_FILENAME=$1
 INPUT_PACKAGE=$2
-INPUT_ACTOR=$3
 INPUT_ACTOR="${3:-$GITHUB_ACTOR}"
 
 echo "  Input parameters: $@"
