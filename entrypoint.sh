@@ -27,10 +27,12 @@ write_file() {
 
 INPUT_FILENAME=$1
 INPUT_PACKAGE=$2
+INPUT_ACTOR="${3:-$GITHUB_ACTOR}"
 
 echo "  Input parameters: $@"
 echo "Requested filename: ${INPUT_FILENAME}"
 echo "Requested  package: ${INPUT_PACKAGE}"
+echo "Requested actor: ${INPUT_ACTOR}"
 
 # Apply hotfix for 'fatal: unsafe repository' error.
 
@@ -38,8 +40,8 @@ git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
 # Required git configuration.
 
-git config user.name "${GITHUB_ACTOR}"
-git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+git config user.name "${INPUT_ACTOR}"
+git config user.email "${INPUT_ACTOR}@users.noreply.github.com"
 
 # Change directory to git repository.
 
