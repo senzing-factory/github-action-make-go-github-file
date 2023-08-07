@@ -6,6 +6,7 @@ set -eu
 write_file() {
     echo "${FIRST_LINE}"                                                   > ${OUTFILE}
     echo "// Created by make-go-github-file.yaml on $(date)"              >> ${OUTFILE}
+    echo "//lint:file-ignore U1000 Ignore all unused code, it's generated">> ${OUTFILE}
     echo "package ${INPUT_PACKAGE}"                                       >> ${OUTFILE}
     echo ""                                                               >> ${OUTFILE}
     echo "var ("                                                          >> ${OUTFILE}
