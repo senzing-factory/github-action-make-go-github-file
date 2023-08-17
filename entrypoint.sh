@@ -108,6 +108,7 @@ echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
 
+
 # DEBUG - If debugging, uncomment following line.  Technique described in
 #         https://github.com/Senzing/github-action-make-go-github-file/issues/65
 # exit 0
