@@ -4,20 +4,21 @@ set -eu
 # Function: write_file()
 
 write_file() {
-    echo "${FIRST_LINE}"                                                   > ${OUTFILE}
-    echo "// Created by make-go-github-file.yaml on $(date)"              >> ${OUTFILE}
-    echo "//lint:file-ignore U1000 Ignore all unused code, it's generated">> ${OUTFILE}
-    echo "package ${INPUT_PACKAGE}"                                       >> ${OUTFILE}
-    echo ""                                                               >> ${OUTFILE}
-    echo "var ("                                                          >> ${OUTFILE}
-    echo "\tgithubDate           string = \"${RELEASE_DATE}\""            >> ${OUTFILE}
-    echo "\tgithubIteration      string = \"${RELEASE_ITERATION}\""       >> ${OUTFILE}
-    echo "\tgithubRef            string = \"refs/tags/${NEXT_VERSION}\""  >> ${OUTFILE}
-    echo "\tgithubRefName        string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
-    echo "\tgithubRepository     string = \"${GITHUB_REPOSITORY}\""       >> ${OUTFILE}
-    echo "\tgithubRepositoryName string = \"${RELEASE_REPOSITORY_NAME}\"" >> ${OUTFILE}
-    echo "\tgithubVersion        string = \"${NEXT_VERSION}\""            >> ${OUTFILE}
-    echo ")"                                                              >> ${OUTFILE}
+    echo "${FIRST_LINE}"                                                    > ${OUTFILE}
+    echo "// Created by make-go-github-file.yaml on $(date)"               >> ${OUTFILE}
+    echo "//"                                                              >> ${OUTFILE}
+    echo "//lint:file-ignore U1000 Ignore all unused code, it's generated" >> ${OUTFILE}
+    echo "package ${INPUT_PACKAGE}"                                        >> ${OUTFILE}
+    echo ""                                                                >> ${OUTFILE}
+    echo "var ("                                                           >> ${OUTFILE}
+    echo "\tgithubDate           string = \"${RELEASE_DATE}\""             >> ${OUTFILE}
+    echo "\tgithubIteration      string = \"${RELEASE_ITERATION}\""        >> ${OUTFILE}
+    echo "\tgithubRef            string = \"refs/tags/${NEXT_VERSION}\""   >> ${OUTFILE}
+    echo "\tgithubRefName        string = \"${NEXT_VERSION}\""             >> ${OUTFILE}
+    echo "\tgithubRepository     string = \"${GITHUB_REPOSITORY}\""        >> ${OUTFILE}
+    echo "\tgithubRepositoryName string = \"${RELEASE_REPOSITORY_NAME}\""  >> ${OUTFILE}
+    echo "\tgithubVersion        string = \"${NEXT_VERSION}\""             >> ${OUTFILE}
+    echo ")"                                                               >> ${OUTFILE}
 }
 
 #------------------------------------------------------------------------------
@@ -106,6 +107,10 @@ echo ""
 echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
+
+# DEBUG - If debugging, uncomment following line.  Technique described in
+#         https://github.com/Senzing/github-action-make-go-github-file/issues/65
+# exit 0
 
 # Commit the file to the branch and push branch to origin.
 
