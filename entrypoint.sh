@@ -6,6 +6,7 @@ set -eu
 write_file() {
     echo "${FIRST_LINE}"                                                   > ${OUTFILE}
     echo "// Created by make-go-github-file.yaml on $(date)"              >> ${OUTFILE}
+    echo "//"                                                             >> ${OUTFILE}
     echo "//lint:file-ignore U1000 Ignore all unused code, it's generated">> ${OUTFILE}
     echo "package ${INPUT_PACKAGE}"                                       >> ${OUTFILE}
     echo ""                                                               >> ${OUTFILE}
@@ -106,6 +107,10 @@ echo ""
 echo "Contents of ${OUTFILE}:"
 echo ""
 cat ${OUTFILE}
+
+# DEBUG - If debugging, uncomment following line.  Technique described at
+#         https://github.com/Senzing/github-action-make-go-github-file/issues/65
+# exit 0
 
 # Commit the file to the branch and push branch to origin.
 
