@@ -6,7 +6,7 @@ Make a github.go file.
 
 ## Overview
 
-The github action creates a pull request with updated values in `github.go`.
+The GitHub action creates a pull request with updated values in `github.go`.
 
 ## Usage
 
