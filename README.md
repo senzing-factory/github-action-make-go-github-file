@@ -62,6 +62,7 @@ The GitHub action creates a pull request with updated values in `github.go`.
               file: example/example.go
               package: myexample
     ```
+
 1. A `.github/workflows/make-go-github-file.yaml` file
    that creates a `cmd/github.go` file for "package cmd"
    using a signed commit.
