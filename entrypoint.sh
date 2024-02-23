@@ -1,24 +1,28 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# shellcheck disable=SC2028
+
 set -eu
 
 # Function: write_file()
 
 write_file() {
-    echo "${FIRST_LINE}"                                                    > ${OUTFILE}
-    echo "// Created by make-go-github-file.yaml on $(date)"               >> ${OUTFILE}
-    echo "//"                                                              >> ${OUTFILE}
-    echo "//lint:file-ignore U1000 Ignore all unused code, it's generated" >> ${OUTFILE}
-    echo "package ${INPUT_PACKAGE}"                                        >> ${OUTFILE}
-    echo ""                                                                >> ${OUTFILE}
-    echo "var ("                                                           >> ${OUTFILE}
-    echo "\tgithubDate           string = \"${RELEASE_DATE}\""             >> ${OUTFILE}
-    echo "\tgithubIteration      string = \"${RELEASE_ITERATION}\""        >> ${OUTFILE}
-    echo "\tgithubRef            string = \"refs/tags/${NEXT_VERSION}\""   >> ${OUTFILE}
-    echo "\tgithubRefName        string = \"${NEXT_VERSION}\""             >> ${OUTFILE}
-    echo "\tgithubRepository     string = \"${GITHUB_REPOSITORY}\""        >> ${OUTFILE}
-    echo "\tgithubRepositoryName string = \"${RELEASE_REPOSITORY_NAME}\""  >> ${OUTFILE}
-    echo "\tgithubVersion        string = \"${NEXT_VERSION}\""             >> ${OUTFILE}
-    echo ")"                                                               >> ${OUTFILE}
+  {
+    echo "${FIRST_LINE}"
+    echo "// Created by make-go-github-file.yaml on $(date)"
+    echo "//"
+    echo "//lint:file-ignore U1000 Ignore all unused code, it's generated"
+    echo "package ${INPUT_PACKAGE}"
+    echo ""
+    echo "var ("
+    echo "\tgithubDate           string = \"${RELEASE_DATE}\""
+    echo "\tgithubIteration      string = \"${RELEASE_ITERATION}\""
+    echo "\tgithubRef            string = \"refs/tags/${NEXT_VERSION}\""
+    echo "\tgithubRefName        string = \"${NEXT_VERSION}\""
+    echo "\tgithubRepository     string = \"${GITHUB_REPOSITORY}\""
+    echo "\tgithubRepositoryName string = \"${RELEASE_REPOSITORY_NAME}\""
+    echo "\tgithubVersion        string = \"${NEXT_VERSION}\""
+    echo ")"
+  } >> "${OUTFILE}"
 }
 
 #------------------------------------------------------------------------------
@@ -31,7 +35,7 @@ INPUT_FILENAME=$1
 INPUT_PACKAGE=$2
 INPUT_ACTOR="${3:-$GITHUB_ACTOR}"
 
-echo "  Input parameters: $@"
+echo "  Input parameters: $*"
 echo "Requested filename: ${INPUT_FILENAME}"
 echo "Requested  package: ${INPUT_PACKAGE}"
 echo "Requested actor: ${INPUT_ACTOR}"
@@ -51,7 +55,7 @@ cd "${GITHUB_WORKSPACE}" || exit
 
 # Synthesize variables.
 
-RELEASE_REPOSITORY_NAME=$(basename ${GITHUB_REPOSITORY})
+RELEASE_REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 RELEASE_ITERATION="0"
 RELEASE_DATE=$(date +%Y-%m-%d)
 OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
@@ -64,7 +68,7 @@ VERSION_MAJOR="${VERSION%%\.*}"
 VERSION_MINOR="${VERSION#*.}"
 VERSION_MINOR="${VERSION_MINOR%.*}"
 VERSION_PATCH="${VERSION##*.}"
-NEXT_VERSION_PATCH=$((1+${VERSION_PATCH}))
+NEXT_VERSION_PATCH=$((1+VERSION_PATCH))
 
 echo "Version: ${VERSION}"
 echo "Version      [major]: ${VERSION_MAJOR}"
@@ -79,8 +83,8 @@ NEXT_BRANCH_NAME="make-go-github-file.yaml/${NEXT_VERSION}"
 
 FIRST_LINE="// ${NEXT_VERSION}"
 
-if [ -f ${OUTFILE} ]; then
-    EXISTING_FIRST_LINE=$(head -n 1 ${OUTFILE})
+if [ -f "${OUTFILE}" ]; then
+    EXISTING_FIRST_LINE=$(head -n 1 "${OUTFILE}")
     if [ "${FIRST_LINE}" = "${EXISTING_FIRST_LINE}" ]; then
         echo "${OUTFILE} is up to date. No changes needed."
         exit 0
@@ -106,7 +110,7 @@ write_file
 echo ""
 echo "Contents of ${OUTFILE}:"
 echo ""
-cat ${OUTFILE}
+cat "${OUTFILE}"
 
 # DEBUG - If debugging, uncomment following line.  Technique described in
 #         https://github.com/Senzing/github-action-make-go-github-file/issues/65
@@ -115,7 +119,7 @@ cat ${OUTFILE}
 # Commit the file to the branch and push branch to origin.
 
 echo ">>>>>>>> git add ${OUTFILE}"
-git add ${OUTFILE}
+git add "${OUTFILE}"
 git status
 
 echo ">>>>>>>> git commit -m \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
