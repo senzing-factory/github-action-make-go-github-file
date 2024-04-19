@@ -22,7 +22,7 @@ write_file() {
     printf "\tgithubRepositoryName string = \"%s\"\n" "${RELEASE_REPOSITORY_NAME}"
     printf "\tgithubVersion        string = \"%s\"\n" "${NEXT_VERSION}"
     printf ")\n"
-  } >> "${OUTFILE}"
+  } > "${OUTFILE}"
 }
 
 #------------------------------------------------------------------------------
