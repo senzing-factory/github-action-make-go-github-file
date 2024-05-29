@@ -32,7 +32,7 @@ The GitHub action creates a pull request with updated values in `github.go`.
             with:
               fetch-depth: '0'
           - name: Make github.go file
-            uses: Senzing/github-action-make-go-github-file@main
+            uses: Senzing/github-action-make-go-github-file@v1
     ```
 
 1. A `.github/workflows/make-go-github-file.yaml` file
@@ -57,7 +57,7 @@ The GitHub action creates a pull request with updated values in `github.go`.
             with:
               fetch-depth: '0'
           - name: Make github.go file
-            uses: Senzing/github-action-make-go-github-file@main
+            uses: Senzing/github-action-make-go-github-file@v1
             with:
               file: example/example.go
               package: myexample
@@ -93,7 +93,7 @@ The GitHub action creates a pull request with updated values in `github.go`.
               git_user_signingkey: true
               git_commit_gpgsign: true
           - name: Make github.go file
-            uses: Senzing/github-action-make-go-github-file@main
+            uses: Senzing/github-action-make-go-github-file@v1
             with:
               actor: ${{ secrets.ACTOR }}
     ```
