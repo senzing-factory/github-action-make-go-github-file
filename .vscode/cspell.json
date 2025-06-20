@@ -1,0 +1,20 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "alnum",
+    "CCLA",
+    "CODEOWNER",
+    "dylib",
+    "ghaction",
+    "gofmt",
+    "gpgsign",
+    "ICLA",
+    "myexample",
+    "Senzing",
+    "signingkey",
+    "stackoverflow",
+    "toplevel"
+  ],
+  "ignorePaths": [".git/**"]
+}
