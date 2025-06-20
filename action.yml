@@ -4,31 +4,31 @@ description: Create a github.go file containing GitHub release information.
 author: support@senzing.com
 
 inputs:
-   file:
-      description: "The file to create. Default: cmd/github.go"
-      required: false
-      default: cmd/github.go
-   package:
-      description: "The package name for the package statement. Default: cmd"
-      required: false
-      default: cmd
-   actor:
-      description: "Optional GitHub actor for signed commits. Must correspond to the noreply email used to create the GPG key."
-      required: false
+  file:
+    description: "The file to create. Default: cmd/github.go"
+    required: false
+    default: cmd/github.go
+  package:
+    description: "The package name for the package statement. Default: cmd"
+    required: false
+    default: cmd
+  actor:
+    description: "Optional GitHub actor for signed commits. Must correspond to the noreply email used to create the GPG key."
+    required: false
 
 runs:
-   using: composite
-   steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-           fetch-depth: "0"
-      - name: run file
-        run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }} ${{ inputs.actor }}
-        shell: bash
-        env:
-           GH_TOKEN: ${{ github.token }}
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: "0"
+    - name: run file
+      run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }} ${{ inputs.actor }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
 
 branding:
-   icon: git-pull-request
-   color: red
+  icon: git-pull-request
+  color: red
