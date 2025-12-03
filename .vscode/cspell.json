@@ -2,19 +2,22 @@
   "version": "0.2",
   "language": "en",
   "words": [
-    "alnum",
     "CCLA",
     "CODEOWNER",
+    "ICLA",
+    "Senzing",
+    "alnum",
     "dylib",
+    "esbenp",
     "ghaction",
     "gofmt",
     "gpgsign",
-    "ICLA",
     "myexample",
-    "Senzing",
     "signingkey",
     "stackoverflow",
     "toplevel"
   ],
-  "ignorePaths": [".git/**"]
+  "ignorePaths": [
+    ".git/**"
+  ]
 }
