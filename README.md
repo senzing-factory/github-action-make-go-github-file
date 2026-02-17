@@ -10,12 +10,12 @@ The GitHub Action creates a pull request with updated values in `github.go`.
 
 ## Inputs
 
-| Input | Description | Required | Default |
-|---|---|---|---|
-| `file` | The file to create. | No | `cmd/github.go` |
-| `package` | The package name for the package statement. | No | `cmd` |
-| `actor` | GitHub actor for signed commits. Must correspond to the noreply email used to create the GPG key. | No | |
-| `github_token` | GitHub token for git push authentication. | No | `${{ github.token }}` |
+| Input          | Description                                                                                       | Required | Default               |
+| -------------- | ------------------------------------------------------------------------------------------------- | -------- | --------------------- |
+| `file`         | The file to create.                                                                               | No       | `cmd/github.go`       |
+| `package`      | The package name for the package statement.                                                       | No       | `cmd`                 |
+| `actor`        | GitHub actor for signed commits. Must correspond to the noreply email used to create the GPG key. | No       |                       |
+| `github_token` | GitHub token for Git push authentication.                                                         | No       | `${{ github.token }}` |
 
 ## Prerequisites
 
