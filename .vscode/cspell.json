@@ -3,6 +3,7 @@
   "language": "en",
   "words": [
     "alnum",
+    "artipacked",
     "CCLA",
     "CODEOWNER",
     "cooldown",
@@ -17,7 +18,8 @@
     "Senzing",
     "signingkey",
     "stackoverflow",
-    "toplevel"
+    "toplevel",
+    "zizmor"
   ],
   "ignorePaths": [".git/**"]
 }

@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added in 2.0.0
 
-- `github_token` input for git push authentication via `gh auth setup-git`
+- `github_token` input for Git push authentication via `gh auth setup-git`
 
 ## [1.0.3] - 2024-05-29
 
