@@ -15,19 +15,22 @@ inputs:
   actor:
     description: "Optional GitHub actor for signed commits. Must correspond to the noreply email used to create the GPG key."
     required: false
+  github_token:
+    description: "GitHub token for git push authentication."
+    required: false
+    default: ${{ github.token }}
 
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: "0"
     - name: run file
-      run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.file }} ${{ inputs.package }} ${{ inputs.actor }}
+      run: ${{ github.action_path }}/entrypoint.sh
       shell: bash
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ inputs.github_token }}
+        INPUT_FILE: ${{ inputs.file }}
+        INPUT_PACKAGE: ${{ inputs.package }}
+        INPUT_ACTOR: ${{ inputs.actor }}
 
 branding:
   icon: git-pull-request

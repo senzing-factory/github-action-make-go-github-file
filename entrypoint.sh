@@ -31,18 +31,22 @@ write_file() {
 
 # Input parameters.
 
-INPUT_FILENAME=$1
-INPUT_PACKAGE=$2
-INPUT_ACTOR="${3:-$GITHUB_ACTOR}"
+INPUT_FILE="${INPUT_FILE:-cmd/github.go}"
+INPUT_PACKAGE="${INPUT_PACKAGE:-cmd}"
+INPUT_ACTOR="${INPUT_ACTOR:-$GITHUB_ACTOR}"
 
-echo "  Input parameters: $*"
-echo "Requested filename: ${INPUT_FILENAME}"
+echo "Requested filename: ${INPUT_FILE}"
 echo "Requested  package: ${INPUT_PACKAGE}"
 echo "Requested actor: ${INPUT_ACTOR}"
 
 # Apply hotfix for 'fatal: unsafe repository' error.
 
 git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+
+# Authenticate gh CLI and configure git credential helper for push.
+
+gh auth login --with-token <<< "${GH_TOKEN}"
+gh auth setup-git
 
 # Required git configuration.
 
@@ -58,7 +62,7 @@ cd "${GITHUB_WORKSPACE}" || exit
 RELEASE_REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 RELEASE_ITERATION="0"
 RELEASE_DATE=$(date +%Y-%m-%d)
-OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILENAME}"
+OUTFILE="${GITHUB_WORKSPACE}/${INPUT_FILE}"
 
 # Calculate next semantic version.
 
@@ -122,8 +126,8 @@ echo ">>>>>>>> git add ${OUTFILE}"
 git add "${OUTFILE}"
 git status
 
-echo ">>>>>>>> git commit -m \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
-git commit -m "make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
+echo ">>>>>>>> git commit -m \"make-go-github-file.yaml updated ${INPUT_FILE} for versioned release: ${NEXT_VERSION}\""
+git commit -m "make-go-github-file.yaml updated ${INPUT_FILE} for versioned release: ${NEXT_VERSION}"
 git status
 
 echo ">>>>>>>> git push --set-upstream origin \"${NEXT_BRANCH_NAME}\""
@@ -132,11 +136,11 @@ git status
 
 # Create a Pull Request for the branch.
 
-echo ">>>>>>>> gh pr create --head \"${NEXT_BRANCH_NAME}\" --title \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\"  --body \"make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}\""
+echo ">>>>>>>> gh pr create --head \"${NEXT_BRANCH_NAME}\" --title \"make-go-github-file.yaml updated ${INPUT_FILE} for versioned release: ${NEXT_VERSION}\"  --body \"make-go-github-file.yaml updated ${INPUT_FILE} for versioned release: ${NEXT_VERSION}\""
 gh pr create \
     --head "${NEXT_BRANCH_NAME}" \
-    --title "make-go-github-file.yaml: ${INPUT_FILENAME}@${NEXT_VERSION}" \
-    --body "make-go-github-file.yaml updated ${INPUT_FILENAME} for versioned release: ${NEXT_VERSION}"
+    --title "make-go-github-file.yaml: ${INPUT_FILE}@${NEXT_VERSION}" \
+    --body "make-go-github-file.yaml updated ${INPUT_FILE} for versioned release: ${NEXT_VERSION}"
 
 echo ">>>>>>>> Done"
 
