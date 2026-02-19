@@ -44,9 +44,14 @@ echo "Requested actor: ${INPUT_ACTOR}"
 git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
 # Authenticate gh CLI and configure git credential helper for push.
+# Temporarily unset GH_TOKEN so gh stores credentials rather than
+# deferring to the environment variable.
 
-gh auth login --with-token <<< "${GH_TOKEN}"
+STORED_TOKEN="${GH_TOKEN}"
+unset GH_TOKEN
+gh auth login --with-token <<< "${STORED_TOKEN}"
 gh auth setup-git
+export GH_TOKEN="${STORED_TOKEN}"
 
 # Required git configuration.
 
